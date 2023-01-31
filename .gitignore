@@ -1,0 +1,4 @@
+# All the build files.
+build/*
+# All the object files from the compiled sources.
+src/**/*.o
