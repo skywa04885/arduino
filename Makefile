@@ -3,13 +3,16 @@ AVR_GCC ?= $(shell which avr-gcc)
 AVR_LD ?= $(shell which avr-ld)
 AVR_OBJCOPY ?= $(shell which avr-objcopy)
 AVR_SIZE ?= $(shell which avr-size)
+AVR_G++ ?= $(shell which avr-g++)
 AVRDUDE ?= $(shell which avrdude)
 
 S_SOURCES = $(shell find ./src -name "*.s")
+CPP_SOURCES = $(shell find ./src -name "*.cpp")
 C_SOURCES = $(shell find ./src -name "*.c")
 
 OBJECTS = $(S_SOURCES:.s=.s.o)
 OBJECTS += $(C_SOURCES:.c=.c.o)
+OBJECTS += $(CPP_SOURCES:.cpp=.cpp.o)
 
 ELF_OUT ?= build/main.elf
 HEX_OUT ?= build/main.ihex
@@ -22,6 +25,11 @@ AVR_GCC_ARGUMENTS += -mmcu=$(MCU)
 AVR_GCC_ARGUMENTS += -Os
 AVR_GCC_ARGUMENTS += -I./inc
 AVR_GCC_ARGUMENTS += -DF_CPU=16000000LU
+
+AVR_G++_ARGUMENTS += -mmcu=$(MCU)
+AVR_G++_ARGUMENTS += -Os
+AVR_G++_ARGUMENTS += -I./inc
+AVR_G++_ARGUMENTS += -DF_CPU=16000000LU
 
 AVR_LD_ARGUMENTS += -mmcu=$(MCU)
 
@@ -40,6 +48,9 @@ AVRDUDE_ARGUMENTS += -P /dev/ttyACM0
 
 %.c.o: %.c
 	$(AVR_GCC) $(AVR_GCC_ARGUMENTS) -c $< -o $@
+
+%.cpp.o: %.cpp
+	$(AVR_G++) $(AVR_G++_ARGUMENTS) -c $< -o $@
 
 all: $(OBJECTS)
 	mkdir -p build

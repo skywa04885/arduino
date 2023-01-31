@@ -1,4 +1,5 @@
-#include "main.h"
+#include "main.hpp"
+#include "hal/gpio.hpp"
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -18,21 +19,20 @@ static void _Clear_BSS(void)
 
 static void _Setup(void)
 {
-  DDRB = _BV(5);
-  PORTB = _BV(5);
+  HAL_GPIO_SetDirection_Output(HAL_GPIO_Pin_LedBuiltIn);
 }
 
 static void _Loop(void)
 {
-  PORTB ^= _BV(5);
+  HAL_GPIO_ToggleLevel(HAL_GPIO_Pin_LedBuiltIn);
   _delay_ms(500);
 }
 
-void ISR_Int0_Handler(void)
+extern "C" void ISR_Int0_Handler(void)
 {
 }
 
-void ISR_Reset_Handler(void)
+extern "C" void ISR_Reset_Handler(void)
 {
   (void) _Clear_BSS();
 
